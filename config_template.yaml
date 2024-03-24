@@ -7,7 +7,7 @@ notion:
       output: <insert_output_filepath_here>
 
 google:
-  api_key: <insert_api_key_here>
+  credentials_file: <insert_filepath_here>
   spreadsheets:
   - <example_spreadsheet_label_here>:
       id: <insert_id_here>
