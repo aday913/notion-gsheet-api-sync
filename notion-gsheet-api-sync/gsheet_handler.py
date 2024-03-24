@@ -3,7 +3,7 @@ import logging
 import sys
 
 from googleapiclient.discovery import build
-from google.auth.credentials import Credentials
+from google.oauth2.credentials import Credentials
 from yaml import load, Loader
 
 log = logging.getLogger(__name__)
@@ -35,9 +35,13 @@ class GoogleWriter:
         pass
 
     def write_data(self, sheet_label: str):
+        with open(self.sheets[sheet_label]['input_json'], 'r') as data:
+            pass
+
+    def build_row(self, json_dict: dict):
         pass
 
-    def build_row(self, json_dict):
+    def get_sheet_header(self, json_dict: dict):
         pass
 
 
