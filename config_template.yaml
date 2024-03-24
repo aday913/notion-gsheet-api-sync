@@ -1,0 +1,8 @@
+api_key : <insert_api_key_here>
+databases :
+- <example_database_label_here>:
+    id : <insert_id_here>
+    description: Description of the database
+- <example_database_label_here>:
+    id : <insert_id_here>
+    description: Description of the database
