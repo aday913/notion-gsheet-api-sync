@@ -1,8 +1,15 @@
-api_key : <insert_api_key_here>
-databases :
-- <example_database_label_here>:
-    id : <insert_id_here>
-    description: Description of the database
-- <example_database_label_here>:
-    id : <insert_id_here>
-    description: Description of the database
+notion:
+  api_key : <insert_api_key_here>
+  databases :
+  - <example_database_label_here>:
+      id : <insert_id_here>
+      description: Description of the database
+      output: <insert_output_filepath_here>
+
+google:
+  api_key: <insert_api_key_here>
+  spreadsheets:
+  - <example_spreadsheet_label_here>:
+      id: <insert_id_here>
+      description: Description of the spreadsheet
+      input_json: <inser_filepath_to_json_here>
