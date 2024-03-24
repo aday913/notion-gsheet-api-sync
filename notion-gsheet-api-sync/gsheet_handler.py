@@ -32,19 +32,56 @@ class GoogleWriter:
         log.debug("Attempting to authenticate google sheets api")
         return build("sheets", "v4", credentials=creds).spreadsheets()
 
-    def load_json_data(self, json_filepath: str):
-        pass
-
     def write_data(self, sheet_label: str):
         with open(self.spreadsheets[sheet_label]["input_json"], "r") as data:
             notion_results = json.load(data)
             first_item = notion_results["results"][0]
             header = self.get_sheet_header(first_item)
             spreadsheetId = self.spreadsheets[sheet_label]["id"]
-            self.write_gsheet_header(header=header, spreadsheetId=spreadsheetId)
+            last_letter = self.list_length_to_column(len(header))
+            self.write_gsheet_header(
+                header=header, spreadsheetId=spreadsheetId, last_letter=last_letter
+            )
+            body = {
+                "majorDimension": "ROWS",
+                "values": [],
+            }
+            count = 1
+            for item in notion_results["results"]:
+                body["values"].append(self.build_row(header=header, json_dict=item))
+                count += 1
+            final_range = f"A2:{last_letter}{count + 1}"
+            body["range"] = final_range
+            self.sheets.values().update(
+                spreadsheetId=spreadsheetId,
+                range=final_range,
+                body=body,
+                valueInputOption="RAW",
+            ).execute()
 
-    def build_row(self, json_dict: dict):
-        pass
+    def build_row(self, header: list, json_dict: dict) -> list:
+        row = []
+        for property_name in header:
+            prop = json_dict["properties"][property_name]
+            prop_type = prop["type"]
+            if prop[prop_type] == None:
+                row.append("")
+                continue
+            if prop_type in ["title", "rich_text"]:
+                row.append(prop[prop_type][0]["text"]["content"])
+            elif prop_type == "multi_select":
+                if prop[prop_type] == []:
+                    row.append("")
+                    continue
+                data = []
+                for selection in prop[prop_type]:
+                    data.append(selection["name"])
+                row.append(",".join(data))
+            elif prop_type == "select":
+                pass
+            elif prop_type == "status":
+                row.append(prop[prop_type]["name"])
+        return row
 
     def get_sheet_header(self, json_dict: dict):
         header = []
@@ -53,8 +90,7 @@ class GoogleWriter:
         log.debug(f"Got the following header from the input json:\n {header}")
         return header
 
-    def write_gsheet_header(self, header: list, spreadsheetId: str):
-        last_letter = self.list_length_to_column(len(header))
+    def write_gsheet_header(self, header: list, spreadsheetId: str, last_letter: str):
         body = {
             "majorDimension": "ROWS",
             "range": f"A1:{last_letter}1",
