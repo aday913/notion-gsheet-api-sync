@@ -50,9 +50,6 @@ class NotionDatabaseRead:
                 has_more = bool(formatted_response["has_more"])
                 next_cursor = formatted_response["next_cursor"]
                 body_json["start_cursor"] = next_cursor
-                log.debug(
-                    f'At the end of query {num_queries}, has_more is {has_more}, next_cursor is {next_cursor}, and there are {len(results_json["results"])} results'
-                )
                 num_queries += 1
         except Exception as error:
             log.error(f"Got the following error when querying db: {error}")
